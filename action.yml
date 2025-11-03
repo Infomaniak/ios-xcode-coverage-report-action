@@ -1,0 +1,15 @@
+name: Xcode Coverage Report
+description: Generate code coverage report from Xcode result bundle
+
+inputs:
+  result-bundle:
+    description: Path to the Xcode result bundle
+    required: true
+
+outputs:
+  report:
+    description: Markdown report of code coverage
+
+runs:
+  using: node20
+  main: dist/index.js
