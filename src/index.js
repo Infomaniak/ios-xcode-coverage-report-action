@@ -26,13 +26,16 @@ try {
     }
 
     // Run xcrun xccov view command and get JSON output (no shell interpolation)
-    const jsonOutput = execFileSync(
+    // Write JSON output to a temporary file
+    const tmpJsonPath = path.join(process.cwd(), "xccov-report.json");
+    execFileSync(
         "xcrun",
-        ["xccov", "view", "--report", "--json", resultBundle],
-        { encoding: "utf-8" }
+        ["xccov", "view", "--report", "--json", resultBundle, ">", tmpJsonPath],
+        { shell: true }
     );
 
-    // Parse the JSON
+    // Read and parse the JSON from the file
+    const jsonOutput = fs.readFileSync(tmpJsonPath, { encoding: "utf-8" });
     const coverageData = JSON.parse(jsonOutput);
 
     // Build markdown report
