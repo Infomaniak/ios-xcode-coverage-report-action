@@ -54,3 +54,6 @@ The `report` output contains a markdown summary like:
 ## Troubleshooting
 - Ensure the path to your `.xcresult` bundle is correct and accessible.
 - The action will fail if the path does not exist or is not a file/directory.
+
+## Developement
+Use `$ npm run build` and commit the updated `dist/index.js` file

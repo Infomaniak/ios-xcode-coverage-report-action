@@ -38,18 +38,37 @@ try {
     const jsonOutput = fs.readFileSync(tmpJsonPath, { encoding: "utf-8" });
     const coverageData = JSON.parse(jsonOutput);
 
-    // Build markdown report
-    const percentCovered = (coverageData.lineCoverage * 100).toFixed(2);
+    // Get optional inclued-targets input
+    const incluedTargetsRaw = core.getInput("inclued-targets", { required: false }) || "";
+    const incluedTargets = incluedTargetsRaw.split(",").map(s => s.trim()).filter(Boolean);
+
+    let filteredTargets = coverageData.targets;
+    let overallExecutable = 0;
+    let overallCovered = 0;
+
+    if (incluedTargets.length > 0) {
+        filteredTargets = coverageData.targets.filter(t => incluedTargets.includes(t.name));
+        // Manually compute overall percent covered
+        for (const target of filteredTargets) {
+            overallExecutable += target.executableLines;
+            overallCovered += target.coveredLines;
+        }
+    } else {
+        overallExecutable = coverageData.executableLines;
+        overallCovered = coverageData.coveredLines;
+    }
+
+    const percentCovered = overallExecutable > 0 ? ((overallCovered / overallExecutable) * 100).toFixed(2) : "0.00";
 
     let markdown = `# Coverage result\n`;
-    markdown += `| Percent covered | ${percentCovered}% |\n`;
+    markdown += `| Overall Percent Covered | ${percentCovered}% |\n`;
     markdown += `| --- | --- |\n`;
-    markdown += `| Executable Lines | ${coverageData.executableLines} |\n`;
-    markdown += `| Covered Lines | ${coverageData.coveredLines} |\n\n`;
+    markdown += `| Executable Lines | ${overallExecutable} |\n`;
+    markdown += `| Covered Lines | ${overallCovered} |\n\n`;
     markdown += `# Details\n`;
 
-    // Add details for each target
-    for (const target of coverageData.targets) {
+    // Add details for each filtered target
+    for (const target of filteredTargets) {
         const targetPercent = (target.lineCoverage * 100).toFixed(2);
         markdown += `<details>\n\n`;
         markdown += `<summary>${target.name} (${targetPercent}%)</summary>\n\n`;
