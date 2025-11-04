@@ -38,16 +38,16 @@ try {
     const jsonOutput = fs.readFileSync(tmpJsonPath, { encoding: "utf-8" });
     const coverageData = JSON.parse(jsonOutput);
 
-    // Get optional inclued-targets input
-    const incluedTargetsRaw = core.getInput("inclued-targets", { required: false }) || "";
-    const incluedTargets = incluedTargetsRaw.split(",").map(s => s.trim()).filter(Boolean);
+    // Get optional included-targets input
+    const includedTargetsRaw = core.getInput("included-targets", { required: false }) || "";
+    const includedTargets = includedTargetsRaw.split(",").map(s => s.trim()).filter(Boolean);
 
     let filteredTargets = coverageData.targets;
     let overallExecutable = 0;
     let overallCovered = 0;
 
-    if (incluedTargets.length > 0) {
-        filteredTargets = coverageData.targets.filter(t => incluedTargets.includes(t.name));
+    if (includedTargets.length > 0) {
+        filteredTargets = coverageData.targets.filter(t => includedTargets.includes(t.name));
         // Manually compute overall percent covered
         for (const target of filteredTargets) {
             overallExecutable += target.executableLines;

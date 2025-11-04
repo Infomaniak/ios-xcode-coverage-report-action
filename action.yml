@@ -5,7 +5,7 @@ inputs:
   result-bundle:
     description: Path to the Xcode result bundle
     required: true
-  include-targets:
+  included-targets:
     description: Comma-separated list of target names to include in the report
     required: false
     default: ""
